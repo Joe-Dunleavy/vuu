@@ -8,16 +8,17 @@ import {
   VuuMenuRpcRequest,
 } from "@finos/vuu-protocol-types";
 import { EventEmitter, uuid } from "@finos/vuu-utils";
-import { ConnectionManager, ServerAPI } from "./connection-manager";
+import { ServerAPI } from "./connection-manager";
 import {
   DataSource,
   DataSourceCallbackMessage,
   DataSourceFilter,
   DataSourceProps,
+  DataSourceVisualLinkCreatedMessage,
   SubscribeCallback,
   SubscribeProps,
 } from "./data-source";
-import { getServerUrl } from "./hooks/useServerConnection";
+import { serverAPI } from "./connection-manager";
 import { MenuRpcResponse } from "./vuuUIMessageTypes";
 
 // const log = (message: string, ...rest: unknown[]) => {
@@ -34,8 +35,7 @@ import { MenuRpcResponse } from "./vuuUIMessageTypes";
 export class RemoteDataSource extends EventEmitter implements DataSource {
   private bufferSize: number;
   private server: ServerAPI | null = null;
-  private url: string;
-  private visualLink: string;
+  private visualLink?: DataSourceVisualLinkCreatedMessage;
   private status: string;
   private disabled: boolean;
   private suspended: boolean;
@@ -52,6 +52,7 @@ export class RemoteDataSource extends EventEmitter implements DataSource {
   #groupBy: VuuGroupBy = [];
   #size = 0;
   #sort: VuuSort = { sortDefs: [] };
+  #title: string | undefined;
 
   public rowCount: number | undefined;
   public table: VuuTable;
@@ -65,8 +66,6 @@ export class RemoteDataSource extends EventEmitter implements DataSource {
     groupBy,
     sort,
     table,
-    configUrl,
-    serverUrl,
     viewport,
     "visual-link": visualLink,
   }: DataSourceProps) {
@@ -76,7 +75,6 @@ export class RemoteDataSource extends EventEmitter implements DataSource {
     this.#columns = columns;
     this.viewport = viewport;
 
-    this.url = serverUrl ?? configUrl ?? getServerUrl();
     this.visualLink = visualLink;
 
     this.status = "initialising";
@@ -95,14 +93,6 @@ export class RemoteDataSource extends EventEmitter implements DataSource {
     if (sort) {
       this.initialSort = sort;
     }
-
-    if (!this.url) {
-      throw Error(
-        "RemoteDataSource expects serverUrl or configUrl as argument or that serverUrl has already been set"
-      );
-    }
-
-    this.pendingServer = ConnectionManager.connect(this.url);
   }
 
   async subscribe(
@@ -148,7 +138,7 @@ export class RemoteDataSource extends EventEmitter implements DataSource {
     this.table = table;
     this.#columns = columns;
 
-    this.server = await this.pendingServer;
+    this.server = await serverAPI;
 
     const { bufferSize } = this;
     this.server?.subscribe(
@@ -248,21 +238,6 @@ export class RemoteDataSource extends EventEmitter implements DataSource {
     return this;
   }
 
-  setSubscribedColumns(columns: string[]) {
-    if (this.viewport) {
-      this.columns = columns;
-
-      const message = {
-        viewport: this.viewport,
-        type: "setColumns",
-        columns,
-      } as const;
-      if (this.server) {
-        this.server.send(message);
-      }
-    }
-  }
-
   setRange(from: number, to: number) {
     if (this.viewport) {
       // log(`setRange ${from} - ${to}`);
@@ -350,7 +325,17 @@ export class RemoteDataSource extends EventEmitter implements DataSource {
   }
 
   set columns(columns: string[]) {
-    console.log(`set columns ${columns.join(",")}`);
+    this.#columns = columns;
+    if (this.viewport) {
+      const message = {
+        viewport: this.viewport,
+        type: "setColumns",
+        columns,
+      } as const;
+      if (this.server) {
+        this.server.send(message);
+      }
+    }
   }
 
   get sort() {
@@ -417,6 +402,15 @@ export class RemoteDataSource extends EventEmitter implements DataSource {
     }
   }
 
+  get title() {
+    return this.#title;
+  }
+
+  set title(title: string | undefined) {
+    this.#title = title;
+    console.log("send title to server");
+  }
+
   createLink({
     parentVpId,
     link: { fromColumn, toColumn },
@@ -449,9 +443,5 @@ export class RemoteDataSource extends EventEmitter implements DataSource {
         ...rpcRequest,
       } as VuuMenuRpcRequest);
     }
-  }
-
-  setTitle(title: string) {
-    console.log(`RemoteDataSource setTitle ${title}`);
   }
 }

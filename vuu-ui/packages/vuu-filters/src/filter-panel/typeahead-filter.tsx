@@ -41,6 +41,7 @@ export const TypeaheadFilter = (props: {
   const handleDropdownToggle = (event: React.MouseEvent): void => {
     event.stopPropagation();
     setShowDropdown(!showDropdown);
+
     if (showDropdown) {
       setTypeaheadParams([typeaheadParams[0], typeaheadParams[1]]);
       getSuggestions([typeaheadParams[0], typeaheadParams[1]]).then(
@@ -53,40 +54,71 @@ export const TypeaheadFilter = (props: {
 
   const getSuggestions = useTypeaheadSuggestions();
 
-  useEffect(() => {
-    getSuggestions(typeaheadParams).then((response) =>
-      setSuggestions(response)
-    );
-  }, [getSuggestions]);
+  // useEffect(() => {
+  //   getSuggestions(typeaheadParams).then((response) =>
+  //     setSuggestions(response)
+  //   );
+  // }, [getSuggestions]);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = event.currentTarget.value;
+  // const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const inputValue = event.currentTarget.value;
 
-    if (inputValue !== undefined) {
-      setTypeaheadParams([typeaheadParams[0], typeaheadParams[1], inputValue]);
-      getSuggestions([typeaheadParams[0], typeaheadParams[1], inputValue]).then(
-        (response) => {
-          setSuggestions(response);
-        }
-      );
-    }
-  };
+  //   if (inputValue !== undefined) {
+  //     setTypeaheadParams([typeaheadParams[0], typeaheadParams[1], inputValue]);
+  //     getSuggestions([typeaheadParams[0], typeaheadParams[1], inputValue]).then(
+  //       (response) => {
+  //         setSuggestions(response);
+  //       }
+  //     );
+  //   }
+  // };
 
   const suggestionSelected = (value: string) => {
+    let newValue;
+
+    if (
+      selectedSuggestions.findIndex((suggestion) => suggestion === value) >= 0
+    ) {
+      newValue = removeOption(value);
+    } else {
+      newValue = [...selectedSuggestions, value];
+    }
+
     setSelectedSuggestions([...selectedSuggestions, value]);
   };
 
-  const getPlaceholder = () => {
-    if (selectedSuggestions.length > 0) {
-      return selectedSuggestions;
-    }
+  const getDisplay = () => {
+    if (!selectedSuggestions || selectedSuggestions.length === 0)
+      return "Filter by";
 
-    return "Filter by";
+    return (
+      <div className="dropdown-tags">
+        {selectedSuggestions.map((suggestion) => (
+          <div key={suggestion} className="dropdown-tag-item">
+            {suggestion}
+            <span
+              onClick={(e) => onTagRemove(e, suggestion)}
+              className="dropdown-tag-close"
+            >
+              <CloseIcon />
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const removeOption = (option: string) => {
+    return selectedSuggestions.filter((o) => o !== option);
+  };
+
+  const onTagRemove = (e: React.MouseEvent, suggestion: string) => {
+    e.stopPropagation();
+    setSelectedSuggestions(removeOption(suggestion));
   };
 
   const isSelected = (suggestion: string) => {
-    if (selectedSuggestions.length < 1) return false;
-    return selectedSuggestions.includes(suggestion);
+    return selectedSuggestions.filter((o) => o === suggestion).length > 0;
   };
 
   return (
@@ -97,7 +129,7 @@ export const TypeaheadFilter = (props: {
           placeholder="Select filter"
           className="dropdown-input"
         >
-          <div className="dropdown-selected-value">{getPlaceholder()}</div>
+          <div className="dropdown-selected-value">{getDisplay()}</div>
           <div className="dropdown-tools">
             <div className="dropdown-tool">
               <Icon />
@@ -130,6 +162,14 @@ const Icon = () => {
   return (
     <svg height="20" width="20" viewBox="0 0 20 20">
       <path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path>
+    </svg>
+  );
+};
+
+const CloseIcon = () => {
+  return (
+    <svg height="20" width="20" viewBox="0 0 20 20">
+      <path d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z"></path>
     </svg>
   );
 };

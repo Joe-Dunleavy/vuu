@@ -33,3 +33,8 @@
 .dropdown-item:hover {
   background-color: #9fc3f870;
 }
+
+.dropdown-item.selected {
+  background-color: #0d6efd;
+  color: #fff;
+}

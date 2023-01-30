@@ -1,6 +1,10 @@
 import { useTypeaheadSuggestions } from "@finos/vuu-data";
 import { TypeaheadParams } from "@finos/vuu-protocol-types";
-import { Dropdown, SIZE_OPTIONS } from "@heswell/salt-lab";
+import {
+  Dropdown,
+  getDropdownPlaceholder,
+  SIZE_OPTIONS,
+} from "@heswell/salt-lab";
 import "./typeahead-filter.css";
 import {
   HTMLAttributes,
@@ -24,7 +28,6 @@ export const TypeaheadFilter = (props: {
     props.defaultTypeaheadParams
   );
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
-  //const [userInput, setUserInput] = useState<string | undefined>(undefined);
 
   // useEffect(() => {
   //   const handler = () => setShowDropdown(false);
@@ -35,12 +38,12 @@ export const TypeaheadFilter = (props: {
   //   };
   // });
 
-  const handleDropdownClick = (event: React.MouseEvent): void => {
+  const handleDropdownToggle = (event: React.MouseEvent): void => {
     event.stopPropagation();
     setShowDropdown(!showDropdown);
     if (showDropdown) {
-      setTypeaheadParams([typeaheadParams[0], typeaheadParams[1], ""]);
-      getSuggestions([typeaheadParams[0], typeaheadParams[1], ""]).then(
+      setTypeaheadParams([typeaheadParams[0], typeaheadParams[1]]);
+      getSuggestions([typeaheadParams[0], typeaheadParams[1]]).then(
         (response) => {
           setSuggestions(response);
         }
@@ -69,40 +72,32 @@ export const TypeaheadFilter = (props: {
     }
   };
 
-  // const suggestionSelected = useCallback((value: string) => {
-  //   setSelectedSuggestions([...selectedSuggestions, value]);
-  // }, []);
+  const suggestionSelected = (value: string) => {
+    setSelectedSuggestions([...selectedSuggestions, value]);
+  };
 
-  // const renderSuggestions = useMemo(() => {
-  //   if (suggestions.length === 0) return <div>test</div>;
-  //   return (
-  //     <div className="dropdown-menu">
-  //       {suggestions.map((suggestion) => (
-  //         <div key={suggestion} className="dropdown-item">
-  //           {suggestion}
-  //         </div>
-  //       ))}
-  //     </div>
-  //     // <ul>
-  //     //   {suggestions.map((value) => (
-  //     //     <li key={value} onClick={(e) => suggestionSelected(value)}>
-  //     //       {value}
-  //     //     </li>
-  //     //   ))}
-  //     // </ul>
-  //   );
-  // }, [suggestions]);
+  const getPlaceholder = () => {
+    if (selectedSuggestions.length > 0) {
+      return selectedSuggestions;
+    }
+
+    return "Filter by";
+  };
+
+  const isSelected = (suggestion: string) => {
+    if (selectedSuggestions.length < 1) return false;
+    return selectedSuggestions.includes(suggestion);
+  };
 
   return (
     <>
       <div className="dropdown-container">
         <div
-          onClick={handleDropdownClick}
-          // onChange={handleInputChange}
-          placeholder="filterBy..."
+          onClick={handleDropdownToggle}
+          placeholder="Select filter"
           className="dropdown-input"
         >
-          <div className="dropdown-selected-value">filter by...</div>
+          <div className="dropdown-selected-value">{getPlaceholder()}</div>
           <div className="dropdown-tools">
             <div className="dropdown-tool">
               <Icon />
@@ -112,14 +107,21 @@ export const TypeaheadFilter = (props: {
         {showDropdown && (
           <div className="dropdown-menu">
             {suggestions.map((suggestion) => (
-              <div key={suggestion} className="dropdown-item">
+              <div
+                key={suggestion}
+                className={`dropdown-item ${
+                  isSelected(suggestion) && "selected"
+                }`}
+                onClick={() => {
+                  suggestionSelected(suggestion);
+                }}
+              >
                 {suggestion}
               </div>
             ))}
           </div>
         )}
       </div>
-      {/* <input onChange={handleInputChange} placeholder="filter by..." /> */}
     </>
   );
 };

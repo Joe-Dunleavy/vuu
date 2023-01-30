@@ -29,14 +29,14 @@ export const TypeaheadFilter = (props: {
   );
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
 
-  // useEffect(() => {
-  //   const handler = () => setShowDropdown(false);
-  //   window.addEventListener("click", handler);
+  useEffect(() => {
+    const handler = () => setShowDropdown(false);
+    window.addEventListener("click", handler);
 
-  //   return () => {
-  //     window.removeEventListener("click", handler);
-  //   };
-  // });
+    return () => {
+      window.removeEventListener("click", handler);
+    };
+  });
 
   const handleDropdownToggle = (event: React.MouseEvent): void => {
     event.stopPropagation();

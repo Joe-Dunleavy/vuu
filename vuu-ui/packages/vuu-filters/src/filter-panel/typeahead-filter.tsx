@@ -38,18 +38,19 @@ export const TypeaheadFilter = (props: {
     };
   });
 
+  //get suggestions on load
+  useEffect(() => {
+    setTypeaheadParams([typeaheadParams[0], typeaheadParams[1]]);
+    getSuggestions([typeaheadParams[0], typeaheadParams[1]]).then(
+      (response) => {
+        setSuggestions(response);
+      }
+    );
+  }, []);
+
   const handleDropdownToggle = (event: React.MouseEvent): void => {
     event.stopPropagation();
     setShowDropdown(!showDropdown);
-
-    if (showDropdown) {
-      setTypeaheadParams([typeaheadParams[0], typeaheadParams[1]]);
-      getSuggestions([typeaheadParams[0], typeaheadParams[1]]).then(
-        (response) => {
-          setSuggestions(response);
-        }
-      );
-    }
   };
 
   const getSuggestions = useTypeaheadSuggestions();
@@ -117,8 +118,11 @@ export const TypeaheadFilter = (props: {
     setSelectedSuggestions(removeOption(suggestion));
   };
 
-  const isSelected = (suggestion: string) => {
-    return selectedSuggestions.filter((o) => o === suggestion).length > 0;
+  const isSelected = (selected: string) => {
+    return (
+      selectedSuggestions.filter((suggestion) => suggestion === selected)
+        .length > 0
+    );
   };
 
   return (

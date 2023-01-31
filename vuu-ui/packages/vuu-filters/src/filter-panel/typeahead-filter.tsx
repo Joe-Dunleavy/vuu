@@ -7,6 +7,7 @@ import {
 } from "@heswell/salt-lab";
 import "./typeahead-filter.css";
 import {
+  createRef,
   HTMLAttributes,
   MouseEvent,
   MouseEventHandler,
@@ -18,7 +19,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { render } from "react-dom";
+import ReactDOM, { render } from "react-dom";
 
 export const TypeaheadFilter = (props: {
   defaultTypeaheadParams: TypeaheadParams;
@@ -39,12 +40,20 @@ export const TypeaheadFilter = (props: {
     }
   }, [showDropdown]);
 
+  const ref = useRef<HTMLDivElement>(null);
+
+  //close dropdown when clicking outside
   useEffect(() => {
-    const handler = () => setShowDropdown(false);
-    window.addEventListener("click", handler);
+    const handleClickOutside = (event: any): void => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+
+    window.addEventListener("click", handleClickOutside);
 
     return () => {
-      window.removeEventListener("click", handler);
+      window.removeEventListener("click", handleClickOutside);
     };
   });
 
@@ -131,7 +140,7 @@ export const TypeaheadFilter = (props: {
 
   return (
     <>
-      <div className="dropdown-container">
+      <div className="dropdown-container" ref={ref}>
         <div
           onClick={handleDropdownToggle}
           placeholder="Select filter"

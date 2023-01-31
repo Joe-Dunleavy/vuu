@@ -44,6 +44,7 @@
   flex-wrap: wrap;
   gap: 5px;
 }
+
 .dropdown-tag-item {
   background-color: #ddd;
   padding: 2px 4px;
@@ -51,7 +52,21 @@
   display: flex;
   align-items: center;
 }
+
 .dropdown-tag-close {
   display: flex;
   align-items: center;
+}
+
+.search-box {
+  padding: 5px;
+  background-color: #eee;
+}
+
+.search-box input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }

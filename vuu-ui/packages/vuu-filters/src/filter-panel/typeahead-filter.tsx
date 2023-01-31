@@ -15,6 +15,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { render } from "react-dom";
@@ -28,6 +29,15 @@ export const TypeaheadFilter = (props: {
     props.defaultTypeaheadParams
   );
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState("");
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setSearchValue("");
+    if (showDropdown && searchRef.current) {
+      searchRef.current.focus();
+    }
+  }, [showDropdown]);
 
   useEffect(() => {
     const handler = () => setShowDropdown(false);
@@ -55,24 +65,18 @@ export const TypeaheadFilter = (props: {
 
   const getSuggestions = useTypeaheadSuggestions();
 
-  // useEffect(() => {
-  //   getSuggestions(typeaheadParams).then((response) =>
-  //     setSuggestions(response)
-  //   );
-  // }, [getSuggestions]);
+  const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+  };
 
-  // const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const inputValue = event.currentTarget.value;
-
-  //   if (inputValue !== undefined) {
-  //     setTypeaheadParams([typeaheadParams[0], typeaheadParams[1], inputValue]);
-  //     getSuggestions([typeaheadParams[0], typeaheadParams[1], inputValue]).then(
-  //       (response) => {
-  //         setSuggestions(response);
-  //       }
-  //     );
-  //   }
-  // };
+  useEffect(() => {
+    setTypeaheadParams([typeaheadParams[0], typeaheadParams[1], searchValue]);
+    getSuggestions([typeaheadParams[0], typeaheadParams[1], searchValue]).then(
+      (options) => {
+        setSuggestions(options);
+      }
+    );
+  }, [searchValue]);
 
   const suggestionSelected = (value: string) => {
     let newValue;
@@ -90,7 +94,7 @@ export const TypeaheadFilter = (props: {
 
   const getDisplay = () => {
     if (!selectedSuggestions || selectedSuggestions.length === 0)
-      return "Filter by";
+      return "Select filter";
 
     return (
       <div className="dropdown-tags">
@@ -142,6 +146,9 @@ export const TypeaheadFilter = (props: {
         </div>
         {showDropdown && (
           <div className="dropdown-menu">
+            <div className="search-box">
+              <input onChange={onSearch} value={searchValue} ref={searchRef} />
+            </div>
             {suggestions.map((suggestion) => (
               <div
                 key={suggestion}

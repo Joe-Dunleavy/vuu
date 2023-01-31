@@ -74,7 +74,7 @@ export const TypeaheadFilter = (props: {
 
   const getSuggestions = useTypeaheadSuggestions();
 
-  const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchValue(e.target.value);
   };
 
@@ -98,12 +98,12 @@ export const TypeaheadFilter = (props: {
       newValue = [...selectedSuggestions, value];
     }
 
-    setSelectedSuggestions([...selectedSuggestions, value]);
+    setSelectedSuggestions(newValue);
   };
 
   const getDisplay = () => {
     if (!selectedSuggestions || selectedSuggestions.length === 0)
-      return "Select filter";
+      return "Select column filter";
 
     return (
       <div className="dropdown-tags">
@@ -122,16 +122,16 @@ export const TypeaheadFilter = (props: {
     );
   };
 
-  const removeOption = (option: string) => {
+  const removeOption = (option: string): string[] => {
     return selectedSuggestions.filter((o) => o !== option);
   };
 
-  const onTagRemove = (e: React.MouseEvent, suggestion: string) => {
+  const onTagRemove = (e: React.MouseEvent, suggestion: string): void => {
     e.stopPropagation();
     setSelectedSuggestions(removeOption(suggestion));
   };
 
-  const isSelected = (selected: string) => {
+  const isSelected = (selected: string): boolean => {
     return (
       selectedSuggestions.filter((suggestion) => suggestion === selected)
         .length > 0
@@ -141,11 +141,7 @@ export const TypeaheadFilter = (props: {
   return (
     <>
       <div className="dropdown-container" ref={ref}>
-        <div
-          onClick={handleDropdownToggle}
-          placeholder="Select filter"
-          className="dropdown-input"
-        >
+        <div onClick={handleDropdownToggle} className="dropdown-input">
           <div className="dropdown-selected-value">{getDisplay()}</div>
           <div className="dropdown-tools">
             <div className="dropdown-tool">

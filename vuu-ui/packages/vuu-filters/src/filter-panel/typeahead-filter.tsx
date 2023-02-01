@@ -1,28 +1,11 @@
 import { useTypeaheadSuggestions } from "@finos/vuu-data";
 import { TypeaheadParams } from "@finos/vuu-protocol-types";
-import {
-  Dropdown,
-  getDropdownPlaceholder,
-  SIZE_OPTIONS,
-} from "@heswell/salt-lab";
 import "./typeahead-filter.css";
-import {
-  createRef,
-  HTMLAttributes,
-  MouseEvent,
-  MouseEventHandler,
-  ReactElement,
-  SyntheticEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import ReactDOM, { render } from "react-dom";
+import { useEffect, useRef, useState } from "react";
 
 export const TypeaheadFilter = (props: {
   defaultTypeaheadParams: TypeaheadParams;
+  onFilterSubmit: any;
 }) => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [selectedSuggestions, setSelectedSuggestions] = useState<string[]>([]);
@@ -99,11 +82,12 @@ export const TypeaheadFilter = (props: {
     }
 
     setSelectedSuggestions(newValue);
+    props.onFilterSubmit(newValue);
   };
 
   const getDisplay = () => {
     if (!selectedSuggestions || selectedSuggestions.length === 0)
-      return "Select column filter";
+      return "Select filter";
 
     return (
       <div className="dropdown-tags">
@@ -122,13 +106,14 @@ export const TypeaheadFilter = (props: {
     );
   };
 
-  const removeOption = (option: string): string[] => {
-    return selectedSuggestions.filter((o) => o !== option);
-  };
-
   const onTagRemove = (e: React.MouseEvent, suggestion: string): void => {
     e.stopPropagation();
     setSelectedSuggestions(removeOption(suggestion));
+    props.onFilterSubmit(selectedSuggestions);
+  };
+
+  const removeOption = (option: string): string[] => {
+    return selectedSuggestions.filter((o) => o !== option);
   };
 
   const isSelected = (selected: string): boolean => {

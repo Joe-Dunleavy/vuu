@@ -2,6 +2,7 @@ import { ColumnDescriptor } from "@finos/vuu-datagrid-types";
 import { VuuColumnDataType } from "@finos/vuu-protocol-types";
 import { Dropdown, Toolbar, ToolbarField } from "@heswell/salt-lab";
 import { SyntheticEvent, useEffect, useState } from "react";
+import { FilterComponent } from "./filter-components/filter-selector";
 
 export const FilterPanel = (props: { columns: ColumnDescriptor[] }) => {
   const [columns, setColumns] = useState<string[]>([]);
@@ -13,12 +14,12 @@ export const FilterPanel = (props: { columns: ColumnDescriptor[] }) => {
     setColumns(props.columns.map(({ name }) => name));
   }, [props.columns]);
 
-  useEffect(() => {
-    const selectedColumn: ColumnDescriptor[] = props.columns.filter(
-      (column) => column.name === selectedColumnName
-    );
-    selectFilterComponent(selectedColumn[0].serverDataType).then(() => {});
-  }, [selectedColumnName]);
+  // useEffect(() => {
+  //   const selectedColumn: ColumnDescriptor[] = props.columns.filter(
+  //     (column) => column.name === selectedColumnName
+  //   );
+  //   selectFilterComponent(selectedColumn[0].serverDataType).then(() => {});
+  // }, [selectedColumnName]);
 
   const getSelectedColumnType = () => {
     if (selectedColumnName !== null) {
@@ -28,7 +29,7 @@ export const FilterPanel = (props: { columns: ColumnDescriptor[] }) => {
 
       return selectedColumn[0].serverDataType;
     } else {
-      return null;
+      return undefined;
     }
   };
 
@@ -56,5 +57,3 @@ export const FilterPanel = (props: { columns: ColumnDescriptor[] }) => {
     </Toolbar>
   );
 };
-
-const selectFilterComponent = (columnType: VuuColumnDataType | undefined) => {};

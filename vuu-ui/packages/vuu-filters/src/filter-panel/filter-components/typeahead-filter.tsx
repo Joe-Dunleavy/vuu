@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 export const TypeaheadFilter = (props: {
   defaultTypeaheadParams: TypeaheadParams;
-  onFilterSubmit: any;
+  onFilterSubmit: Function;
 }) => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [selectedSuggestions, setSelectedSuggestions] = useState<string[]>([]);

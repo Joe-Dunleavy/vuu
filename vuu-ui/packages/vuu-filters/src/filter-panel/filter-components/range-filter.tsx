@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 export const RangeFilter = (props: {
   defaultTypeaheadParams: TypeaheadParams;
-  onFilterSubmit: any;
+  onFilterSubmit: Function;
 }) => {
   const [range, setRange] = useState<IRange>({ start: null, end: null });
   const [query, setQuery] = useState<string | null>(null);
@@ -49,9 +49,11 @@ const getRangeQuery = (range: IRange, column: string): string => {
   }
 
   const queryOptions = {
-    start: `${column} > ${range.start ? range.start - 1: null}`,
+    start: `${column} > ${range.start ? range.start - 1 : null}`,
     end: `${column} < ${range.end ? range.end + 1 : null}`,
-    both: `${column} > ${range.start ? range.start - 1: null} and ${column} < ${range.end ? range.end + 1 : null}`,
+    both: `${column} > ${
+      range.start ? range.start - 1 : null
+    } and ${column} < ${range.end ? range.end + 1 : null}`,
   };
 
   return queryOptions[queryType];

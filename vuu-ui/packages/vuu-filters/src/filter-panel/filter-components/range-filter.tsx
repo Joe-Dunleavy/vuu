@@ -1,11 +1,20 @@
 import { TypeaheadParams } from "@finos/vuu-protocol-types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const RangeFilter = (props: {
   defaultTypeaheadParams: TypeaheadParams;
+  onFilterSubmit: any;
 }) => {
   const [range, setRange] = useState<IRange>({ start: null, end: null });
-  const [queryType, setqueryType] = useState<string | null>(null);
+  const [query, setQuery] = useState<string | null>(null);
+
+  useEffect(() => {
+    setQuery(getRangeQuery(range, props.defaultTypeaheadParams[1]));
+  }, [range]);
+
+  useEffect(() => {
+    props.onFilterSubmit(query);
+  }, [query]);
 
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value: number | null = null;
@@ -40,9 +49,9 @@ const getRangeQuery = (range: IRange, column: string): string => {
   }
 
   const queryOptions = {
-    start: `${column} >= ${range.start}`,
-    end: `${column} <= ${range.end}`,
-    both: `${column} >= ${range.start} and ${column} <= ${range.end}`,
+    start: `${column} > ${range.start ? range.start - 1: null}`,
+    end: `${column} < ${range.end ? range.end + 1 : null}`,
+    both: `${column} > ${range.start ? range.start - 1: null} and ${column} < ${range.end ? range.end + 1 : null}`,
   };
 
   return queryOptions[queryType];

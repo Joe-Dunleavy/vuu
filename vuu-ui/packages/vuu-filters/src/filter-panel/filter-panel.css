@@ -1,11 +1,16 @@
-/* .vuuFilterDropdown,
+.vuuFilterDropdown,
 .vuuFilterSwitch {
-    --saltToolbarField-marginTop: 0;
+  --saltToolbarField-marginTop: 0;
 
-    height: 100%;
+  height: 100%;
 }
 
 .vuuFilterDropdown.saltFormField-focused:before {
-    top: 2px !important;
-    bottom: 2px !important;
-} */
+  top: 2px !important;
+  bottom: 2px !important;
+}
+
+.filter-component {
+  position: absolute;
+  left: 20px;
+}

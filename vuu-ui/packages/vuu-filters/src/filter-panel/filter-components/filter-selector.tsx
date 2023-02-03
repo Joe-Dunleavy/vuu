@@ -17,7 +17,7 @@ export const FilterComponent = (props: {
       />
     );
   } else {
-    return undefined;
+    return <>Select a column from the dropdown</>;
   }
 };
 

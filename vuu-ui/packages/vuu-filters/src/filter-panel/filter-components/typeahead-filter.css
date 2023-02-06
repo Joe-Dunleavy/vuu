@@ -73,8 +73,11 @@
   box-sizing: border-box;
   padding: 5px;
   border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .dropdown-tool {
   cursor: pointer;
+  position: relative;
+  top: 2px;
 }

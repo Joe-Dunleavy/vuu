@@ -82,7 +82,8 @@ export const TypeaheadFilter = (props: {
     }
 
     setSelectedSuggestions(newValue);
-    props.onFilterSubmit(newValue);
+    const filterQuery = getFilterQuery(newValue, typeaheadParams[1]);
+    props.onFilterSubmit(filterQuery);
   };
 
   const getDisplay = () => {
@@ -108,8 +109,10 @@ export const TypeaheadFilter = (props: {
 
   const onTagRemove = (e: React.MouseEvent, suggestion: string): void => {
     e.stopPropagation();
-    setSelectedSuggestions(removeOption(suggestion));
-    props.onFilterSubmit(selectedSuggestions);
+    const newSelection = removeOption(suggestion);
+    setSelectedSuggestions(newSelection);
+    const filterQuery = getFilterQuery(newSelection, typeaheadParams[1]);
+    props.onFilterSubmit(filterQuery);
   };
 
   const removeOption = (option: string): string[] => {
@@ -158,6 +161,20 @@ export const TypeaheadFilter = (props: {
     </>
   );
 };
+
+function getFilterQuery(filterValues: string[], column: string) {
+  if (filterValues.length > 0) {
+    let filterQuery = `${column} = "${filterValues[0]}"`;
+
+    filterValues.slice(1).forEach(function (value) {
+      filterQuery += ` or ${column} = "${value}"`;
+    });
+
+    return filterQuery.replace("_", " ");
+  } else {
+    return "";
+  }
+}
 
 const Icon = () => {
   return (

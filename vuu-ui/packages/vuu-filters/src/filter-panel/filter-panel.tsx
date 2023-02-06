@@ -54,7 +54,7 @@ export const FilterPanel = (props: {
   };
 
   return (
-    <Panel className="filter-panel" variant="secondary">
+    <Panel id="filter-panel" variant="secondary">
       <div className="inline-block">
         <ToolbarField
           className="column-field"
@@ -64,13 +64,11 @@ export const FilterPanel = (props: {
           <Dropdown
             className="arrow-down-symbol"
             onSelectionChange={handleColumnSelect}
-            // defaultSelected={[currencies[0]]}
-            //selectionStrategy="multiple"
             source={props.columns.map(({ name }) => name)}
           />
         </ToolbarField>
       </div>
-      <div className="inline-block">
+      <div id="filter-component" className="inline-block">
         {selectedColumnName ? (
           <FilterComponent
             columnType={getSelectedColumnType()}

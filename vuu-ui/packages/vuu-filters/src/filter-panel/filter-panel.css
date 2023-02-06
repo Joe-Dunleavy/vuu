@@ -26,19 +26,26 @@
   top: 50%;
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
-  z-index: 9999999999999 !important;
+  z-index: 999;
 }
 
-.filter-panel {
+#filter-panel {
   display: table;
   position: relative;
   overflow: "visible";
   text-align: center;
-  border: 1px solid black;
+  border: 1px solid #ccc;
   height: 50px;
-  padding: 0px;
+  padding: 1px;
+  z-index: 999;
+  width: 700px;
 }
 
 .inline-block {
   display: inline-block;
+}
+
+#filter-component {
+  width: 500px;
+  margin-left: 40px;
 }

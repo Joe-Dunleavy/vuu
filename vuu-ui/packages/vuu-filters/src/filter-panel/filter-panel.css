@@ -1,4 +1,4 @@
-.vuuFilterDropdown,
+/* .vuuFilterDropdown,
 .vuuFilterSwitch {
   --saltToolbarField-marginTop: 0;
 
@@ -8,9 +8,37 @@
 .vuuFilterDropdown.saltFormField-focused:before {
   top: 2px !important;
   bottom: 2px !important;
+} */
+
+/* .filter-component {
+  position: relative;
+  left: 20px;
+  bottom: 0px;
+} */
+
+.arrow-down-symbol {
+  width: 100px;
 }
 
-.filter-component {
+.column-field {
   position: absolute;
-  left: 20px;
+  left: 10px;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  z-index: 9999999999999 !important;
+}
+
+.filter-panel {
+  display: table;
+  position: relative;
+  overflow: "visible";
+  text-align: center;
+  border: 1px solid black;
+  height: 50px;
+  padding: 0px;
+}
+
+.inline-block {
+  display: inline-block;
 }

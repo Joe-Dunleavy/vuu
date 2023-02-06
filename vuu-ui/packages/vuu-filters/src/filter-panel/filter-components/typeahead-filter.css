@@ -2,7 +2,8 @@
   text-align: left;
   border: 1px solid #ccc;
   position: relative;
-  border-radius: 5px;
+  bottom: 0;
+  width: 200px;
 }
 
 .dropdown-input {
@@ -18,7 +19,6 @@
   transform: translateY(4px);
   width: 100%;
   border: 1px solid #ccc;
-  border-radius: 5px;
   overflow: auto;
   max-height: 150px;
   background-color: #fff;
@@ -69,5 +69,4 @@
   box-sizing: border-box;
   padding: 5px;
   border: 1px solid #ccc;
-  border-radius: 5px;
 }

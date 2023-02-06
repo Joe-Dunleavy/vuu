@@ -87,7 +87,7 @@ export const TypeaheadFilter = (props: {
 
   const getDisplay = () => {
     if (!selectedSuggestions || selectedSuggestions.length === 0)
-      return "Select filter";
+      return "Filter";
 
     return (
       <div className="dropdown-tags">

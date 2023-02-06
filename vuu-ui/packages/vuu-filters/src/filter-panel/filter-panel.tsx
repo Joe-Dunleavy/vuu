@@ -3,6 +3,7 @@ import { ColumnDescriptor } from "@finos/vuu-datagrid-types";
 import { VuuColumnDataType, VuuTable } from "@finos/vuu-protocol-types";
 import {
   Dropdown,
+  Panel,
   SelectionChangeHandler,
   Toolbar,
   ToolbarField,
@@ -53,22 +54,23 @@ export const FilterPanel = (props: {
   };
 
   return (
-    <Toolbar id="toolbar-default">
-      <ToolbarField
-        //className="vuuFilterDropdown"
-        label="Column"
-        labelPlacement="top"
-      >
-        <Dropdown
-          className="arrow-down-symbol"
-          onSelectionChange={handleColumnSelect}
-          // defaultSelected={[currencies[0]]}
-          //selectionStrategy="multiple"
-          source={props.columns.map(({ name }) => name)}
-          style={{ width: 100 }}
-        />
-      </ToolbarField>
-      <div className="filter-component">
+    <Panel className="filter-panel" variant="secondary">
+      <div className="inline-block">
+        <ToolbarField
+          className="column-field"
+          label="Column"
+          labelPlacement="top"
+        >
+          <Dropdown
+            className="arrow-down-symbol"
+            onSelectionChange={handleColumnSelect}
+            // defaultSelected={[currencies[0]]}
+            //selectionStrategy="multiple"
+            source={props.columns.map(({ name }) => name)}
+          />
+        </ToolbarField>
+      </div>
+      <div className="inline-block">
         {selectedColumnName ? (
           <FilterComponent
             columnType={getSelectedColumnType()}
@@ -77,6 +79,6 @@ export const FilterPanel = (props: {
           />
         ) : null}
       </div>
-    </Toolbar>
+    </Panel>
   );
 };

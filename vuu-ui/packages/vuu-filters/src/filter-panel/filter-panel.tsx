@@ -38,6 +38,11 @@ export const FilterPanel = (props: {
     setSelectedColumnName(selectedItem);
   };
 
+  const handleClear = () => {
+    setSelectedColumnName(null);
+    props.onFilterSubmit("");
+  };
+
   const onFilterSubmit = (filterQuery: string) => {
     props.onFilterSubmit(filterQuery);
   };
@@ -65,7 +70,11 @@ export const FilterPanel = (props: {
               defaultTypeaheadParams={[props.table, selectedColumnName]}
               onFilterSubmit={onFilterSubmit}
             />
-            <button className="clear-button" type="button">
+            <button
+              className="clear-button"
+              type="button"
+              onClick={handleClear}
+            >
               Clear
             </button>
           </div>

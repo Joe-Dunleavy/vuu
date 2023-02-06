@@ -169,7 +169,7 @@ function getFilterQuery(filterValues: string[], column: string) {
       filterQuery += ` or ${column} = "${value}"`;
     });
 
-    return filterQuery.replace("_", " ");
+    return filterQuery.replaceAll("_", " ");
   } else {
     return "";
   }

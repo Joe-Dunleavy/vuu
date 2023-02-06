@@ -9,6 +9,7 @@ import {
   ToolbarField,
 } from "@heswell/salt-lab";
 import { SyntheticEvent, useEffect, useState } from "react";
+import { Button } from "../../../../showcase/src/examples/salt";
 import { FilterComponent } from "./filter-components/filter-selector";
 import "./filter-panel.css";
 
@@ -17,21 +18,9 @@ export const FilterPanel = (props: {
   columns: ColumnDescriptor[];
   onFilterSubmit: Function;
 }) => {
-  //const [columns, setColumns] = useState<string[]>([]);
   const [selectedColumnName, setSelectedColumnName] = useState<string | null>(
     null
   );
-
-  // useEffect(() => {
-  //   setColumns(props.columns.map(({ name }) => name));
-  // }, [props.columns]);
-
-  // useEffect(() => {
-  //   const selectedColumn: ColumnDescriptor[] = props.columns.filter(
-  //     (column) => column.name === selectedColumnName
-  //   );
-  //   selectFilterComponent(selectedColumn[0].serverDataType).then(() => {});
-  // }, [selectedColumnName]);
 
   const getSelectedColumnType = () => {
     if (selectedColumnName !== null) {
@@ -70,11 +59,16 @@ export const FilterPanel = (props: {
       </div>
       <div id="filter-component" className="inline-block">
         {selectedColumnName ? (
-          <FilterComponent
-            columnType={getSelectedColumnType()}
-            defaultTypeaheadParams={[props.table, selectedColumnName]}
-            onFilterSubmit={onFilterSubmit}
-          />
+          <div>
+            <FilterComponent
+              columnType={getSelectedColumnType()}
+              defaultTypeaheadParams={[props.table, selectedColumnName]}
+              onFilterSubmit={onFilterSubmit}
+            />
+            <button className="clear-button" type="button">
+              Clear
+            </button>
+          </div>
         ) : null}
       </div>
     </Panel>

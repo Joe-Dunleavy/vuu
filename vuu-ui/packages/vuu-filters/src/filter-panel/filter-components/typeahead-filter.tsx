@@ -42,13 +42,21 @@ export const TypeaheadFilter = (props: {
 
   //get suggestions on load
   useEffect(() => {
-    setTypeaheadParams([typeaheadParams[0], typeaheadParams[1]]);
-    getSuggestions([typeaheadParams[0], typeaheadParams[1]]).then(
-      (response) => {
-        setSuggestions(response);
+    setTypeaheadParams(props.defaultTypeaheadParams);
+    getSuggestions(props.defaultTypeaheadParams).then((response) => {
+      setSuggestions(response);
+    });
+  }, [props.defaultTypeaheadParams[1]]);
+
+  //get suggestions while typing
+  useEffect(() => {
+    setTypeaheadParams([typeaheadParams[0], typeaheadParams[1], searchValue]);
+    getSuggestions([typeaheadParams[0], typeaheadParams[1], searchValue]).then(
+      (options) => {
+        setSuggestions(options);
       }
     );
-  }, []);
+  }, [searchValue]);
 
   const handleDropdownToggle = (event: React.MouseEvent): void => {
     event.stopPropagation();
@@ -60,15 +68,6 @@ export const TypeaheadFilter = (props: {
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchValue(e.target.value);
   };
-
-  useEffect(() => {
-    setTypeaheadParams([typeaheadParams[0], typeaheadParams[1], searchValue]);
-    getSuggestions([typeaheadParams[0], typeaheadParams[1], searchValue]).then(
-      (options) => {
-        setSuggestions(options);
-      }
-    );
-  }, [searchValue]);
 
   const suggestionSelected = (value: string) => {
     let newValue;

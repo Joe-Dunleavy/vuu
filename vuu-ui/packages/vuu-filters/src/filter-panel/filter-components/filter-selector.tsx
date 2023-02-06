@@ -16,9 +16,9 @@ export const FilterComponent = (props: {
         onFilterSubmit={props.onFilterSubmit}
       />
     );
-  } else {
-    return <>Select a column from the dropdown</>;
   }
+
+  return null;
 };
 
 const filterComponent = {

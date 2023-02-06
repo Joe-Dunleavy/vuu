@@ -49,3 +49,14 @@
   width: 500px;
   margin-left: 40px;
 }
+
+.clear-button {
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  height: 28px;
+  right: 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}

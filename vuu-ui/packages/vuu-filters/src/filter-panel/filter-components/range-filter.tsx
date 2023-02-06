@@ -1,5 +1,6 @@
 import { TypeaheadParams } from "@finos/vuu-protocol-types";
 import { useEffect, useState } from "react";
+import "./range-filter.css";
 
 export const RangeFilter = (props: {
   defaultTypeaheadParams: TypeaheadParams;
@@ -32,9 +33,14 @@ export const RangeFilter = (props: {
   };
 
   return (
-    <div>
-      <input name="start" onChange={inputChangeHandler} /> to{" "}
-      <input name="end" onChange={inputChangeHandler} />
+    <div className="range-filter-container">
+      <input
+        className="range-input"
+        name="start"
+        onChange={inputChangeHandler}
+      />
+      {" to "}
+      <input className="range-input" name="end" onChange={inputChangeHandler} />
     </div>
   );
 };

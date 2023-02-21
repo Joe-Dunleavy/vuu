@@ -1,6 +1,5 @@
-import { RemoteDataSource } from "@finos/vuu-data";
 import { ColumnDescriptor } from "@finos/vuu-datagrid-types";
-import { VuuColumnDataType, VuuTable } from "@finos/vuu-protocol-types";
+import { VuuTable } from "@finos/vuu-protocol-types";
 import {
   Dropdown,
   Panel,
@@ -8,8 +7,7 @@ import {
   Toolbar,
   ToolbarField,
 } from "@heswell/salt-lab";
-import { SyntheticEvent, useEffect, useState } from "react";
-import { Button } from "../../../../showcase/src/examples/salt";
+import { useState } from "react";
 import { FilterComponent } from "./filter-components/filter-selector";
 import "./filter-panel.css";
 

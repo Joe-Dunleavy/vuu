@@ -8,10 +8,10 @@ export const FilterComponent = (props: {
   onFilterSubmit: Function;
 }) => {
   if (props.columnType !== undefined) {
-    const Component = filterComponent[props.columnType];
+    const SelectedFilter = filterComponent[props.columnType];
 
     return (
-      <Component
+      <SelectedFilter
         defaultTypeaheadParams={props.defaultTypeaheadParams}
         onFilterSubmit={props.onFilterSubmit}
       />

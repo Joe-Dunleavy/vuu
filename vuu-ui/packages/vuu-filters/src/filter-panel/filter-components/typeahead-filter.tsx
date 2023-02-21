@@ -70,15 +70,10 @@ export const TypeaheadFilter = (props: {
   };
 
   const suggestionSelected = (value: string) => {
-    let newValue;
-
-    if (
+    const newValue =
       selectedSuggestions.findIndex((suggestion) => suggestion === value) >= 0
-    ) {
-      newValue = removeOption(value);
-    } else {
-      newValue = [...selectedSuggestions, value];
-    }
+        ? removeOption(value)
+        : [...selectedSuggestions, value];
 
     setSelectedSuggestions(newValue);
     const filterQuery = getFilterQuery(newValue, typeaheadParams[1]);
@@ -170,8 +165,6 @@ function getFilterQuery(filterValues: string[], column: string) {
     });
 
     return filterQuery.replaceAll("_", " ");
-  } else {
-    return "";
   }
 }
 

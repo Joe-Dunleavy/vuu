@@ -18,13 +18,7 @@ export const RangeFilter = (props: {
   }, [query]);
 
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value: number | null = null;
-
-    if (e.target.value === "") {
-      value = null;
-    } else {
-      value = Number(e.target.value);
-    }
+    const value = e.target.value === "" ? null : Number(e.target.value);
 
     setRange({
       ...range,

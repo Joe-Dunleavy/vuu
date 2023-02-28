@@ -20,6 +20,8 @@ export const FilterPanel = (props: {
     null
   );
 
+  const [filterQuery, setFilterQuery] = useState<string | null>(null);
+
   const getSelectedColumnType = () => {
     if (selectedColumnName !== null) {
       const selectedColumn: ColumnDescriptor[] = props.columns.filter(
@@ -38,11 +40,14 @@ export const FilterPanel = (props: {
 
   const handleClear = () => {
     setSelectedColumnName(null);
+    setFilterQuery(null);
     props.onFilterSubmit("");
   };
 
-  const onFilterSubmit = (filterQuery: string) => {
-    props.onFilterSubmit(filterQuery);
+  const onFilterSubmit = (newQuery: string) => {
+    newQuery = getFilterQuery(newQuery, filterQuery);
+    setFilterQuery(newQuery);
+    props.onFilterSubmit(newQuery);
   };
 
   return (
@@ -81,3 +86,11 @@ export const FilterPanel = (props: {
     </Panel>
   );
 };
+
+function getFilterQuery(newQuery: string, oldQuery: string | null) {
+  if (oldQuery) {
+    newQuery += " and " + oldQuery;
+  }
+
+  return newQuery;
+}

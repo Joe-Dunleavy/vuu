@@ -4,10 +4,9 @@ import {
   Dropdown,
   Panel,
   SelectionChangeHandler,
-  Toolbar,
   ToolbarField,
 } from "@heswell/salt-lab";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FilterComponent } from "./filter-components/filter-selector";
 import "./filter-panel.css";
 
@@ -19,11 +18,21 @@ export const FilterPanel = (props: {
   const [selectedColumnName, setSelectedColumnName] = useState<string | null>(
     null
   );
+  const [allQueries, setAllQueries] = useState<{
+    [key: string]: string;
+  } | null>(null);
 
-  const [filterQuery, setFilterQuery] = useState<string | null>(null);
+  useEffect(() => {
+    if (allQueries) {
+      const queryString = getFilterQuery(allQueries);
+      props.onFilterSubmit(queryString);
+    } else {
+      props.onFilterSubmit("");
+    }
+  });
 
   const getSelectedColumnType = () => {
-    if (selectedColumnName !== null) {
+    if (selectedColumnName) {
       const selectedColumn: ColumnDescriptor[] = props.columns.filter(
         (column) => column.name === selectedColumnName
       );
@@ -40,14 +49,13 @@ export const FilterPanel = (props: {
 
   const handleClear = () => {
     setSelectedColumnName(null);
-    setFilterQuery(null);
-    props.onFilterSubmit("");
+    setAllQueries(null);
   };
 
   const onFilterSubmit = (newQuery: string) => {
-    newQuery = getFilterQuery(newQuery, filterQuery);
-    setFilterQuery(newQuery);
-    props.onFilterSubmit(newQuery);
+    if (selectedColumnName) {
+      setAllQueries({ ...allQueries, [selectedColumnName]: newQuery });
+    }
   };
 
   return (
@@ -87,9 +95,21 @@ export const FilterPanel = (props: {
   );
 };
 
-function getFilterQuery(newQuery: string, oldQuery: string | null) {
-  if (oldQuery) {
-    newQuery += " and " + oldQuery;
+function getFilterQuery(
+  allQueries: {
+    [key: string]: string;
+  } | null
+) {
+  let newQuery = "";
+
+  if (allQueries) {
+    Object.values(allQueries).forEach((query) => {
+      if (query && query != "") {
+        newQuery += query + " and ";
+      }
+    });
+
+    newQuery = newQuery.slice(0, newQuery.length - 5);
   }
 
   return newQuery;

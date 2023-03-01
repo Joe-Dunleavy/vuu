@@ -8,10 +8,12 @@ export const TypeaheadFilter = (props: {
   onFilterSubmit: Function;
 }) => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [selectedSuggestions, setSelectedSuggestions] = useState<string[]>([]);
   const [typeaheadParams, setTypeaheadParams] = useState<TypeaheadParams>(
     props.defaultTypeaheadParams
   );
+  const [selectedSuggestions, setSelectedSuggestions] = useState<{
+    [key: string]: string[];
+  }>({ [typeaheadParams[1]]: [] });
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
@@ -64,29 +66,35 @@ export const TypeaheadFilter = (props: {
   };
 
   const getSuggestions = useTypeaheadSuggestions();
-
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchValue(e.target.value);
   };
 
   const suggestionSelected = (value: string) => {
     const newValue =
-      selectedSuggestions.findIndex((suggestion) => suggestion === value) >= 0
+      selectedSuggestions[typeaheadParams[1]].findIndex(
+        (suggestion) => suggestion === value
+      ) >= 0
         ? removeOption(value)
-        : [...selectedSuggestions, value];
-
-    setSelectedSuggestions(newValue);
+        : [...selectedSuggestions[typeaheadParams[1]], value];
+    setSelectedSuggestions({
+      ...selectedSuggestions,
+      [typeaheadParams[1]]: newValue,
+    });
     const filterQuery = getFilterQuery(newValue, typeaheadParams[1]);
     props.onFilterSubmit(filterQuery);
   };
 
   const getDisplay = () => {
-    if (!selectedSuggestions || selectedSuggestions.length === 0)
+    if (
+      !selectedSuggestions ||
+      selectedSuggestions[typeaheadParams[1]].length === 0
+    )
       return "Filter";
 
     return (
       <div className="dropdown-tags">
-        {selectedSuggestions.map((suggestion) => (
+        {selectedSuggestions[typeaheadParams[1]].map((suggestion) => (
           <div key={suggestion} className="dropdown-tag-item">
             {suggestion}
             <span
@@ -104,20 +112,30 @@ export const TypeaheadFilter = (props: {
   const onTagRemove = (e: React.MouseEvent, suggestion: string): void => {
     e.stopPropagation();
     const newSelection = removeOption(suggestion);
-    setSelectedSuggestions(newSelection);
+    setSelectedSuggestions({
+      ...selectedSuggestions,
+      [typeaheadParams[1]]: newSelection,
+    });
     const filterQuery = getFilterQuery(newSelection, typeaheadParams[1]);
     props.onFilterSubmit(filterQuery);
   };
 
   const removeOption = (option: string): string[] => {
-    return selectedSuggestions.filter((o) => o !== option);
+    if (selectedSuggestions)
+      return selectedSuggestions[typeaheadParams[1]].filter(
+        (o) => o !== option
+      );
+    else return [];
   };
 
   const isSelected = (selected: string): boolean => {
-    return (
-      selectedSuggestions.filter((suggestion) => suggestion === selected)
-        .length > 0
-    );
+    if (selectedSuggestions)
+      return (
+        selectedSuggestions[typeaheadParams[1]].filter(
+          (suggestion) => suggestion === selected
+        ).length > 0
+      );
+    else return false;
   };
 
   return (

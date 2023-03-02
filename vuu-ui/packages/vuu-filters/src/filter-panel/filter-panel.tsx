@@ -29,7 +29,7 @@ export const FilterPanel = (props: {
     } else {
       props.onFilterSubmit("");
     }
-  });
+  }, [allQueries, selectedColumnName]);
 
   const getSelectedColumnType = () => {
     if (selectedColumnName) {

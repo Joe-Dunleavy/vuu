@@ -7,13 +7,16 @@ export const TypeaheadFilter = (props: {
   defaultTypeaheadParams: TypeaheadParams;
   onFilterSubmit: Function;
 }) => {
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [typeaheadParams, setTypeaheadParams] = useState<TypeaheadParams>(
-    props.defaultTypeaheadParams
-  );
+  const [tableName, columnName] = props.defaultTypeaheadParams;
+  //const [typeaheadParams, setTypeaheadParams] = useState<TypeaheadParams>(
+  //   props.defaultTypeaheadParams
+  // );
+  const [suggestions, setSuggestions] = useState<{ [key: string]: string[] }>({
+    [columnName]: [],
+  });
   const [selectedSuggestions, setSelectedSuggestions] = useState<{
     [key: string]: string[];
-  }>({ [typeaheadParams[1]]: [] });
+  }>({ [columnName]: [] });
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
@@ -26,6 +29,15 @@ export const TypeaheadFilter = (props: {
   }, [showDropdown]);
 
   const ref = useRef<HTMLDivElement>(null);
+
+  //if selected column changes, add it to selectedSuggestions
+  useEffect(() => {
+    if (!selectedSuggestions[columnName])
+      setSelectedSuggestions({
+        ...selectedSuggestions,
+        [columnName]: [],
+      });
+  }, [columnName]);
 
   //close dropdown when clicking outside
   useEffect(() => {
@@ -44,20 +56,18 @@ export const TypeaheadFilter = (props: {
 
   //get suggestions on load
   useEffect(() => {
-    setTypeaheadParams(props.defaultTypeaheadParams);
+    //setTypeaheadParams(props.defaultTypeaheadParams);
     getSuggestions(props.defaultTypeaheadParams).then((response) => {
-      setSuggestions(response);
+      setSuggestions({ ...suggestions, [columnName]: response });
     });
   }, [props.defaultTypeaheadParams[1]]);
 
   //get suggestions while typing
   useEffect(() => {
-    setTypeaheadParams([typeaheadParams[0], typeaheadParams[1], searchValue]);
-    getSuggestions([typeaheadParams[0], typeaheadParams[1], searchValue]).then(
-      (options) => {
-        setSuggestions(options);
-      }
-    );
+    //setTypeaheadParams([tableName, columnName, searchValue]);
+    getSuggestions([tableName, columnName, searchValue]).then((options) => {
+      setSuggestions({ ...suggestions, [columnName]: options });
+    });
   }, [searchValue]);
 
   const handleDropdownToggle = (event: React.MouseEvent): void => {
@@ -72,29 +82,31 @@ export const TypeaheadFilter = (props: {
 
   const suggestionSelected = (value: string) => {
     const newValue =
-      selectedSuggestions[typeaheadParams[1]].findIndex(
+      selectedSuggestions[columnName].findIndex(
         (suggestion) => suggestion === value
       ) >= 0
         ? removeOption(value)
-        : [...selectedSuggestions[typeaheadParams[1]], value];
+        : [...selectedSuggestions[columnName], value];
+
     setSelectedSuggestions({
       ...selectedSuggestions,
-      [typeaheadParams[1]]: newValue,
+      [columnName]: newValue,
     });
-    const filterQuery = getFilterQuery(newValue, typeaheadParams[1]);
+
+    const filterQuery = getFilterQuery(newValue, columnName);
     props.onFilterSubmit(filterQuery);
   };
 
   const getDisplay = () => {
     if (
-      !selectedSuggestions ||
-      selectedSuggestions[typeaheadParams[1]].length === 0
+      !selectedSuggestions[columnName] ||
+      selectedSuggestions[columnName].length === 0
     )
       return "Filter";
 
     return (
       <div className="dropdown-tags">
-        {selectedSuggestions[typeaheadParams[1]].map((suggestion) => (
+        {selectedSuggestions[columnName].map((suggestion) => (
           <div key={suggestion} className="dropdown-tag-item">
             {suggestion}
             <span
@@ -114,24 +126,22 @@ export const TypeaheadFilter = (props: {
     const newSelection = removeOption(suggestion);
     setSelectedSuggestions({
       ...selectedSuggestions,
-      [typeaheadParams[1]]: newSelection,
+      [columnName]: newSelection,
     });
-    const filterQuery = getFilterQuery(newSelection, typeaheadParams[1]);
+    const filterQuery = getFilterQuery(newSelection, columnName);
     props.onFilterSubmit(filterQuery);
   };
 
   const removeOption = (option: string): string[] => {
     if (selectedSuggestions)
-      return selectedSuggestions[typeaheadParams[1]].filter(
-        (o) => o !== option
-      );
+      return selectedSuggestions[columnName].filter((o) => o !== option);
     else return [];
   };
 
   const isSelected = (selected: string): boolean => {
-    if (selectedSuggestions)
+    if (selectedSuggestions[columnName])
       return (
-        selectedSuggestions[typeaheadParams[1]].filter(
+        selectedSuggestions[columnName].filter(
           (suggestion) => suggestion === selected
         ).length > 0
       );
@@ -154,7 +164,7 @@ export const TypeaheadFilter = (props: {
             <div className="search-box">
               <input onChange={onSearch} value={searchValue} ref={searchRef} />
             </div>
-            {suggestions.map((suggestion) => (
+            {suggestions[columnName].map((suggestion: string) => (
               <div
                 key={suggestion}
                 className={`dropdown-item ${

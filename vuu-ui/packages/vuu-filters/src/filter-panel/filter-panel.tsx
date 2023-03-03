@@ -22,6 +22,10 @@ export const FilterPanel = (props: {
     [key: string]: string;
   } | null>(null);
 
+  const [filters, setFilters] = useState<{
+    [key: string]: string[];
+  } | null>(null);
+
   useEffect(() => {
     if (allQueries) {
       const queryString = getFilterQuery(allQueries);
@@ -50,12 +54,16 @@ export const FilterPanel = (props: {
   const handleClear = () => {
     setSelectedColumnName(null);
     setAllQueries(null);
+    setFilters(null);
   };
 
-  const onFilterSubmit = (newQuery: string) => {
-    if (selectedColumnName) {
+  const onFilterSubmit = (
+    newQuery: string,
+    selectedFilters: { [key: string]: string[] }
+  ) => {
+    setFilters({ ...filters, ...selectedFilters });
+    if (selectedColumnName)
       setAllQueries({ ...allQueries, [selectedColumnName]: newQuery });
-    }
   };
 
   return (
@@ -79,6 +87,7 @@ export const FilterPanel = (props: {
             <FilterComponent
               columnType={getSelectedColumnType()}
               defaultTypeaheadParams={[props.table, selectedColumnName]}
+              filters={filters}
               onFilterSubmit={onFilterSubmit}
             />
             <button

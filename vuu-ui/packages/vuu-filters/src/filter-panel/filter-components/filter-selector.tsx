@@ -5,6 +5,7 @@ import { TypeaheadFilter } from "./typeahead-filter";
 export const FilterComponent = (props: {
   columnType: VuuColumnDataType | undefined;
   defaultTypeaheadParams: TypeaheadParams;
+  filters: { [key: string]: string[] } | null;
   onFilterSubmit: Function;
 }) => {
   if (props.columnType !== undefined) {
@@ -13,6 +14,7 @@ export const FilterComponent = (props: {
     return (
       <SelectedFilter
         defaultTypeaheadParams={props.defaultTypeaheadParams}
+        existingFilters={props.filters}
         onFilterSubmit={props.onFilterSubmit}
       />
     );

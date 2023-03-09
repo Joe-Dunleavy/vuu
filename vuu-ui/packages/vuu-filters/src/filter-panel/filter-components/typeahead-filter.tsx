@@ -17,6 +17,7 @@ export const TypeaheadFilter = (props: {
   }>(props.existingFilters ?? { [columnName]: [] });
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState("");
+  const [filterType, setFilterType] = useState<string>(FilterType.exactMatch);
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -98,6 +99,10 @@ export const TypeaheadFilter = (props: {
     });
   };
 
+  const onFilterTypeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilterType(e.target.value);
+  };
+
   const getDisplay = () => {
     if (
       !selectedSuggestions[columnName] ||
@@ -169,9 +174,14 @@ export const TypeaheadFilter = (props: {
                 ref={searchRef}
                 id="input-field"
               />
-              <select className="is-right" value="match" id="inner-dropdown">
-                <option value="match">Exact match</option>
-                <option>Starts with</option>
+              <select
+                className="is-right"
+                defaultValue={FilterType.exactMatch}
+                id="inner-dropdown"
+                onChange={onFilterTypeSelect}
+              >
+                <option value={FilterType.exactMatch}>Exact match</option>
+                <option value={FilterType.startsWith}>Starts with</option>
               </select>
             </div>
             {suggestions[columnName].map((suggestion: string) => (
@@ -197,6 +207,11 @@ export const TypeaheadFilter = (props: {
 function getFilterQuery(filterValues: string[], column: string) {
   if (filterValues && filterValues.length > 0)
     return `${column} in ${JSON.stringify(filterValues)}`;
+}
+
+enum FilterType {
+  exactMatch = "exact match",
+  startsWith = "starts with",
 }
 
 const Icon = () => {

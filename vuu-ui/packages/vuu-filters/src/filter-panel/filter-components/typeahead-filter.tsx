@@ -169,7 +169,7 @@ export const TypeaheadFilter = (props: {
                 ref={searchRef}
                 id="input-field"
               />
-              <select value="match" id="inner-dropdown">
+              <select className="is-right" value="match" id="inner-dropdown">
                 <option value="match">Exact match</option>
                 <option>Starts with</option>
               </select>

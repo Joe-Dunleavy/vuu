@@ -97,4 +97,5 @@
   position: relative;
   left: 5px;
   cursor: pointer;
+  direction: rtl;
 }

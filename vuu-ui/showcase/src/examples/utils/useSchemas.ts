@@ -6,13 +6,13 @@ export type Schema = { table: VuuTable; columns: ColumnDescriptor[] };
 const schemas: { [key: string]: Schema } = {
   instruments: {
     columns: [
-      { name: "bbg" },
-      { name: "currency" },
-      { name: "description" },
-      { name: "exchange" },
-      { name: "isin" },
-      { name: "lotSize" },
-      { name: "ric" },
+      { name: "bbg", serverDataType: "string", pin: "left" },
+      { name: "currency", serverDataType: "string" },
+      { name: "description", serverDataType: "string" },
+      { name: "exchange", serverDataType: "string" },
+      { name: "isin", serverDataType: "string" },
+      { name: "lotSize", serverDataType: "int" },
+      { name: "ric", serverDataType: "string" },
     ],
     table: { module: "SIMUL", table: "instruments" },
   },

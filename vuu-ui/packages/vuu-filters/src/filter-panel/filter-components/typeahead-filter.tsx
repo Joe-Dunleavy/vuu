@@ -186,15 +186,8 @@ export const TypeaheadFilter = (props: {
 };
 
 function getFilterQuery(filterValues: string[], column: string) {
-  if (filterValues && filterValues.length > 0) {
-    let filterQuery = `${column} = "${filterValues[0]}"`;
-
-    filterValues.slice(1).forEach(function (value) {
-      filterQuery += ` or ${column} = "${value}"`;
-    });
-
-    return filterQuery.replaceAll("_", " ");
-  }
+  if (filterValues && filterValues.length > 0)
+    return `${column} in ${JSON.stringify(filterValues)}`;
 }
 
 const Icon = () => {

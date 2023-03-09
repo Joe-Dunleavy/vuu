@@ -163,7 +163,16 @@ export const TypeaheadFilter = (props: {
         {showDropdown && (
           <div className="dropdown-menu">
             <div className="search-box">
-              <input onChange={onSearch} value={searchValue} ref={searchRef} />
+              <input
+                onChange={onSearch}
+                value={searchValue}
+                ref={searchRef}
+                id="input-field"
+              />
+              <select value="match" id="inner-dropdown">
+                <option value="match">Exact match</option>
+                <option>Starts with</option>
+              </select>
             </div>
             {suggestions[columnName].map((suggestion: string) => (
               <div

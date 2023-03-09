@@ -66,6 +66,8 @@
 .search-box {
   padding: 5px;
   background-color: #eee;
+  white-space: nowrap;
+  overflow-x: auto;
 }
 
 .search-box input {
@@ -80,4 +82,19 @@
   cursor: pointer;
   position: relative;
   top: 2px;
+}
+
+#input-field {
+  width: 95%;
+}
+
+#inner-dropdown {
+  border: none;
+  outline: none;
+  background-color: #eee;
+  height: 25px;
+  width: 18px;
+  position: relative;
+  left: 5px;
+  cursor: pointer;
 }

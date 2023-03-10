@@ -1,11 +1,11 @@
 import { TypeaheadParams, VuuColumnDataType } from "@finos/vuu-protocol-types";
-import { RangeFilter } from "./range-filter";
+import { IRange, RangeFilter } from "./range-filter";
 import { TypeaheadFilter } from "./typeahead-filter";
 
 export const FilterComponent = (props: {
   columnType: VuuColumnDataType | undefined;
   defaultTypeaheadParams: TypeaheadParams;
-  filters: { [key: string]: string[] } | null;
+  filters: { [key: string]: string[] | IRange } | null;
   onFilterSubmit: Function;
 }) => {
   if (props.columnType !== undefined) {

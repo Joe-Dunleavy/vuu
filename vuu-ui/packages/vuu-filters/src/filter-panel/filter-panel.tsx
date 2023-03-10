@@ -9,6 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import { FilterComponent } from "./filter-components/filter-selector";
 import "./filter-panel.css";
+import { IRange } from "./filter-components/range-filter";
 
 export const FilterPanel = (props: {
   table: VuuTable;
@@ -24,7 +25,7 @@ export const FilterPanel = (props: {
   } | null>(null);
 
   const [filters, setFilters] = useState<{
-    [key: string]: string[];
+    [key: string]: string[] | IRange;
   } | null>(null);
 
   useEffect(() => {
@@ -60,7 +61,7 @@ export const FilterPanel = (props: {
 
   const onFilterSubmit = (
     newQuery: string,
-    selectedFilters: { [key: string]: string[] }
+    selectedFilters: { [key: string]: string[] | IRange }
   ) => {
     setFilters({ ...filters, ...selectedFilters });
     if (selectedColumnName)

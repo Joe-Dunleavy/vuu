@@ -83,23 +83,3 @@
   position: relative;
   top: 2px;
 }
-
-#input-field {
-  width: 95%;
-}
-
-#inner-dropdown {
-  border: none;
-  outline: none;
-  background-color: #eee;
-  height: 25px;
-  width: 18px;
-  position: relative;
-  left: 5px;
-  cursor: pointer;
-  direction: rtl;
-}
-
-#inner-dropdown option {
-  background-color: #fff;
-}

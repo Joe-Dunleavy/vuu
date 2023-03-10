@@ -17,7 +17,6 @@ export const TypeaheadFilter = (props: {
   }>(props.existingFilters ?? { [columnName]: [] });
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState("");
-  const [filterType, setFilterType] = useState<string>(FilterType.exactMatch);
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -99,10 +98,6 @@ export const TypeaheadFilter = (props: {
     });
   };
 
-  const onFilterTypeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilterType(e.target.value);
-  };
-
   const getDisplay = () => {
     if (
       !selectedSuggestions[columnName] ||
@@ -174,16 +169,6 @@ export const TypeaheadFilter = (props: {
                 ref={searchRef}
                 id="input-field"
               />
-              <select
-                title="select filter type"
-                className="is-right"
-                defaultValue={FilterType.exactMatch}
-                id="inner-dropdown"
-                onChange={onFilterTypeSelect}
-              >
-                <option value={FilterType.exactMatch}>Exact match</option>
-                <option value={FilterType.startsWith}>Starts with</option>
-              </select>
             </div>
             {suggestions[columnName].map((suggestion: string) => (
               <div

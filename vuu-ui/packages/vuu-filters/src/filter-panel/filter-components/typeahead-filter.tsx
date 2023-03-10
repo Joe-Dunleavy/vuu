@@ -31,11 +31,15 @@ export const TypeaheadFilter = (props: {
 
   //if selected column changes, add it to selectedSuggestions
   useEffect(() => {
-    if (!selectedSuggestions[columnName])
+    if (!selectedSuggestions[columnName]) {
       setSelectedSuggestions({
         ...selectedSuggestions,
         [columnName]: [],
       });
+      startsWithFilter.current = false;
+    } else {
+      setIsStartsWithFilter();
+    }
   }, [columnName]);
 
   //close dropdown when clicking outside
@@ -76,6 +80,26 @@ export const TypeaheadFilter = (props: {
     );
     props.onFilterSubmit(filterQuery, selectedSuggestions);
   }, [selectedSuggestions]);
+
+  const setIsStartsWithFilter = () => {
+    if (selectedSuggestions[columnName][0]) {
+      const lastThreeCharacters = selectedSuggestions[columnName][0].substring(
+        selectedSuggestions[columnName][0].length - 3,
+        selectedSuggestions[columnName][0].length
+      );
+
+      if (
+        selectedSuggestions[columnName].length === 1 &&
+        lastThreeCharacters === "..."
+      ) {
+        startsWithFilter.current = true;
+      } else {
+        startsWithFilter.current = false;
+      }
+    } else {
+      startsWithFilter.current = false;
+    }
+  };
 
   const handleDropdownToggle = (event: React.MouseEvent): void => {
     event.stopPropagation();
@@ -229,12 +253,16 @@ function getFilterQuery(
   column: string,
   isStartsWithFilter?: boolean
 ) {
-  if (isStartsWithFilter) {
-    const startsWith = filterValues[0].substring(0, filterValues[0].length - 3);
-    return `${column} starts ${startsWith}`; // multiple starts with filters not currently supported
-  } else {
-    if (filterValues && filterValues.length > 0)
+  if (filterValues && filterValues.length > 0) {
+    if (isStartsWithFilter) {
+      const startsWith = filterValues[0].substring(
+        0,
+        filterValues[0].length - 3
+      );
+      return `${column} starts ${startsWith}`; // multiple starts with filters not currently supported
+    } else {
       return `${column} in ${JSON.stringify(filterValues)}`;
+    }
   }
 }
 

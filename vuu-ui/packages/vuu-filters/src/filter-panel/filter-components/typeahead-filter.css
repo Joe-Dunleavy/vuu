@@ -99,3 +99,7 @@
   cursor: pointer;
   direction: rtl;
 }
+
+#inner-dropdown option {
+  background-color: #fff;
+}

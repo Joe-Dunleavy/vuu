@@ -175,6 +175,7 @@ export const TypeaheadFilter = (props: {
                 id="input-field"
               />
               <select
+                title="select filter type"
                 className="is-right"
                 defaultValue={FilterType.exactMatch}
                 id="inner-dropdown"

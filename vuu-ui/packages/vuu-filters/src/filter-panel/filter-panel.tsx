@@ -64,8 +64,6 @@ export const FilterPanel = (props: {
     selectedFilters: string[] | IRange,
     columnName: string
   ) => {
-    //setFilters({ ...filters, ...selectedFilters });
-
     setFilters((filters) => {
       return { ...filters, [columnName]: selectedFilters };
     });

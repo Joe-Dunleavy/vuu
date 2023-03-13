@@ -113,21 +113,21 @@ export const TypeaheadFilter = (props: {
     if (isAlreadySelected(selectedValue)) {
       startsWithFilter.current = false;
       return removeOption(selectedValue);
-    } else {
-      if (isStartsWithVal(selectedValue)) {
-        startsWithFilter.current = true;
-        return [selectedValue];
-      } else {
-        //don't allow starts with filter to be mixed with exact match filter
-        if (startsWithFilter.current) {
-          startsWithFilter.current = false;
-          return [selectedValue];
-        } else {
-          startsWithFilter.current = false;
-          return [...selectedSuggestions, selectedValue];
-        }
-      }
     }
+
+    if (isStartsWithVal(selectedValue)) {
+      startsWithFilter.current = true;
+      return [selectedValue];
+    }
+
+    //don't allow starts with filter to be mixed with exact match filter
+    if (startsWithFilter.current) {
+      startsWithFilter.current = false;
+      return [selectedValue];
+    }
+
+    startsWithFilter.current = false;
+    return [...selectedSuggestions, selectedValue];
   };
 
   const getDisplay = () => {

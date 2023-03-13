@@ -13,7 +13,6 @@ export const TypeaheadFilter = (props: {
   const [selectedSuggestions, setSelectedSuggestions] = useState<string[]>(
     props.existingFilters ?? []
   );
-
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
@@ -87,9 +86,9 @@ export const TypeaheadFilter = (props: {
 
       if (selectedSuggestions.length === 1 && lastThreeCharacters === "...") {
         return true;
-      } else {
-        return false;
       }
+
+      return false;
     }
 
     return false;
@@ -166,7 +165,7 @@ export const TypeaheadFilter = (props: {
   const removeOption = (option: string): string[] => {
     if (selectedSuggestions)
       return selectedSuggestions.filter((o) => o !== option);
-    else return [];
+    return [];
   };
 
   const isSelected = (selected: string): boolean => {
@@ -175,7 +174,8 @@ export const TypeaheadFilter = (props: {
         selectedSuggestions.filter((suggestion) => suggestion === selected)
           .length > 0
       );
-    else return false;
+
+    return false;
   };
 
   function isStartsWithVal(selectedVal: string) {
@@ -243,9 +243,9 @@ function getFilterQuery(
         filterValues[0].length - 3
       );
       return `${column} starts ${startsWith}`; // multiple starts with filters not currently supported
-    } else {
-      return `${column} in ${JSON.stringify(filterValues)}`;
     }
+
+    return `${column} in ${JSON.stringify(filterValues)}`;
   }
 }
 

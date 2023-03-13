@@ -61,9 +61,15 @@ export const FilterPanel = (props: {
 
   const onFilterSubmit = (
     newQuery: string,
-    selectedFilters: { [key: string]: string[] | IRange }
+    selectedFilters: string[] | IRange,
+    columnName: string
   ) => {
-    setFilters({ ...filters, ...selectedFilters });
+    //setFilters({ ...filters, ...selectedFilters });
+
+    setFilters((filters) => {
+      return { ...filters, [columnName]: selectedFilters };
+    });
+
     if (selectedColumnName)
       setAllQueries({ ...allQueries, [selectedColumnName]: newQuery });
   };
@@ -89,7 +95,7 @@ export const FilterPanel = (props: {
             <FilterComponent
               columnType={getSelectedColumnType()}
               defaultTypeaheadParams={[props.table, selectedColumnName]}
-              filters={filters}
+              filters={filters ? filters[selectedColumnName] : null}
               onFilterSubmit={onFilterSubmit}
             />
             <button

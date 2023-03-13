@@ -4,34 +4,33 @@ import "./range-filter.css";
 
 export const RangeFilter = (props: {
   defaultTypeaheadParams: TypeaheadParams;
-  existingFilters: { [key: string]: IRange } | null;
+  existingFilters: IRange | null;
   onFilterSubmit: Function;
 }) => {
   const columnName = props.defaultTypeaheadParams[1];
-  const [range, setRange] = useState<{ [key: string]: IRange }>(
+  const [range, setRange] = useState<IRange>(
     props.existingFilters ?? {
-      [columnName]: { start: null, end: null },
+      start: null,
+      end: null,
     }
   );
   const [query, setQuery] = useState<string | null>(null);
 
   useEffect(() => {
-    setQuery(getRangeQuery(range[columnName], columnName));
+    setQuery(getRangeQuery(range, columnName));
   }, [range]);
 
   useEffect(() => {
-    props.onFilterSubmit(query, range);
+    props.onFilterSubmit(query, range, columnName);
   }, [query]);
 
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value === "" ? null : Number(e.target.value);
 
-    setRange((range) => ({
-      [columnName]: {
-        ...range[columnName],
-        [e.target.name]: value,
-      },
-    }));
+    setRange({
+      ...range,
+      [e.target.name]: value,
+    });
   };
 
   return (
@@ -40,14 +39,14 @@ export const RangeFilter = (props: {
         className="range-input"
         name="start"
         onChange={inputChangeHandler}
-        value={(range[columnName] && range[columnName].start) ?? ""}
+        value={(range && range.start) ?? ""}
       />
       {" to "}
       <input
         className="range-input"
         name="end"
         onChange={inputChangeHandler}
-        value={(range[columnName] && range[columnName].end) ?? ""}
+        value={(range && range.end) ?? ""}
       />
     </div>
   );

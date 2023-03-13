@@ -5,16 +5,15 @@ import { useEffect, useRef, useState } from "react";
 
 export const TypeaheadFilter = (props: {
   defaultTypeaheadParams: TypeaheadParams;
-  existingFilters: { [key: string]: string[] } | null;
+  existingFilters: string[] | null;
   onFilterSubmit: Function;
 }) => {
   const [tableName, columnName] = props.defaultTypeaheadParams;
-  const [suggestions, setSuggestions] = useState<{ [key: string]: string[] }>({
-    [columnName]: [],
-  });
-  const [selectedSuggestions, setSelectedSuggestions] = useState<{
-    [key: string]: string[];
-  }>(props.existingFilters ?? { [columnName]: [] });
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [selectedSuggestions, setSelectedSuggestions] = useState<string[]>(
+    props.existingFilters ?? []
+  );
+
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
@@ -31,15 +30,20 @@ export const TypeaheadFilter = (props: {
 
   //if selected column changes, add it to selectedSuggestions
   useEffect(() => {
-    if (!selectedSuggestions[columnName]) {
-      setSelectedSuggestions({
-        ...selectedSuggestions,
-        [columnName]: [],
-      });
-      startsWithFilter.current = false;
-    } else {
+    if (props.existingFilters) {
+      setSelectedSuggestions(props.existingFilters);
       setIsStartsWithFilter();
+    } else {
+      setSelectedSuggestions([]);
+      startsWithFilter.current = false;
     }
+
+    // if (!selectedSuggestions) {
+    //   setSelectedSuggestions([]);
+    //   startsWithFilter.current = false;
+    // } else {
+    //   setIsStartsWithFilter();
+    // }
   }, [columnName]);
 
   //close dropdown when clicking outside
@@ -60,7 +64,7 @@ export const TypeaheadFilter = (props: {
   //get suggestions on load
   useEffect(() => {
     getSuggestions(props.defaultTypeaheadParams).then((response) => {
-      setSuggestions({ ...suggestions, [columnName]: response });
+      setSuggestions(response);
     });
   }, [props.defaultTypeaheadParams[1]]);
 
@@ -68,30 +72,27 @@ export const TypeaheadFilter = (props: {
   useEffect(() => {
     getSuggestions([tableName, columnName, searchValue]).then((options) => {
       if (searchValue) options.unshift(`${searchValue}...`);
-      setSuggestions({ ...suggestions, [columnName]: options });
+      setSuggestions(options);
     });
   }, [searchValue]);
 
   useEffect(() => {
     const filterQuery = getFilterQuery(
-      selectedSuggestions[columnName],
+      selectedSuggestions,
       columnName,
       startsWithFilter.current
     );
-    props.onFilterSubmit(filterQuery, selectedSuggestions);
+    props.onFilterSubmit(filterQuery, selectedSuggestions, columnName);
   }, [selectedSuggestions]);
 
   const setIsStartsWithFilter = () => {
-    if (selectedSuggestions[columnName][0]) {
-      const lastThreeCharacters = selectedSuggestions[columnName][0].substring(
-        selectedSuggestions[columnName][0].length - 3,
-        selectedSuggestions[columnName][0].length
+    if (selectedSuggestions[0]) {
+      const lastThreeCharacters = selectedSuggestions[0].substring(
+        selectedSuggestions[0].length - 3,
+        selectedSuggestions[0].length
       );
 
-      if (
-        selectedSuggestions[columnName].length === 1 &&
-        lastThreeCharacters === "..."
-      ) {
+      if (selectedSuggestions.length === 1 && lastThreeCharacters === "...") {
         startsWithFilter.current = true;
       } else {
         startsWithFilter.current = false;
@@ -112,11 +113,7 @@ export const TypeaheadFilter = (props: {
   };
 
   const suggestionSelected = (value: string) => {
-    const newSelection = getUpdatedSelection(value);
-    setSelectedSuggestions({
-      ...selectedSuggestions,
-      [columnName]: newSelection,
-    });
+    setSelectedSuggestions(getUpdatedSelection(value));
   };
 
   const getUpdatedSelection = (selectedValue: string) => {
@@ -134,22 +131,19 @@ export const TypeaheadFilter = (props: {
           return [selectedValue];
         } else {
           startsWithFilter.current = false;
-          return [...selectedSuggestions[columnName], selectedValue];
+          return [...selectedSuggestions, selectedValue];
         }
       }
     }
   };
 
   const getDisplay = () => {
-    if (
-      !selectedSuggestions[columnName] ||
-      selectedSuggestions[columnName].length === 0
-    )
+    if (!selectedSuggestions || selectedSuggestions.length === 0)
       return "Filter";
 
     return (
       <div className="dropdown-tags">
-        {selectedSuggestions[columnName].map((suggestion) => (
+        {selectedSuggestions.map((suggestion) => (
           <div key={suggestion} className="dropdown-tag-item">
             {suggestion}
             <span
@@ -167,10 +161,7 @@ export const TypeaheadFilter = (props: {
   const onTagRemove = (e: React.MouseEvent, suggestion: string): void => {
     e.stopPropagation();
     const newSelection = removeOption(suggestion);
-    setSelectedSuggestions({
-      ...selectedSuggestions,
-      [columnName]: newSelection,
-    });
+    setSelectedSuggestions(newSelection);
     const filterQuery = getFilterQuery(
       newSelection,
       columnName,
@@ -181,16 +172,15 @@ export const TypeaheadFilter = (props: {
 
   const removeOption = (option: string): string[] => {
     if (selectedSuggestions)
-      return selectedSuggestions[columnName].filter((o) => o !== option);
+      return selectedSuggestions.filter((o) => o !== option);
     else return [];
   };
 
   const isSelected = (selected: string): boolean => {
-    if (selectedSuggestions[columnName])
+    if (selectedSuggestions)
       return (
-        selectedSuggestions[columnName].filter(
-          (suggestion) => suggestion === selected
-        ).length > 0
+        selectedSuggestions.filter((suggestion) => suggestion === selected)
+          .length > 0
       );
     else return false;
   };
@@ -201,7 +191,7 @@ export const TypeaheadFilter = (props: {
 
   const isAlreadySelected = (selectedValue: string): boolean => {
     return (
-      selectedSuggestions[columnName].findIndex(
+      selectedSuggestions.findIndex(
         (suggestion) => suggestion === selectedValue
       ) >= 0
     );
@@ -228,7 +218,7 @@ export const TypeaheadFilter = (props: {
                 id="input-field"
               />
             </div>
-            {suggestions[columnName].map((suggestion: string) => (
+            {suggestions.map((suggestion: string) => (
               <div
                 key={suggestion}
                 className={`dropdown-item ${

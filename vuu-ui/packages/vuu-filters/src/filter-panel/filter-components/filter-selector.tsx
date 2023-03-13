@@ -5,7 +5,7 @@ import { TypeaheadFilter } from "./typeahead-filter";
 export const FilterComponent = (props: {
   columnType: VuuColumnDataType | undefined;
   defaultTypeaheadParams: TypeaheadParams;
-  filters: { [key: string]: string[] | IRange } | null;
+  filters: string[] | IRange | null;
   onFilterSubmit: Function;
 }) => {
   if (props.columnType !== undefined) {

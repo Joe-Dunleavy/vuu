@@ -32,18 +32,11 @@ export const TypeaheadFilter = (props: {
   useEffect(() => {
     if (props.existingFilters) {
       setSelectedSuggestions(props.existingFilters);
-      setIsStartsWithFilter();
+      startsWithFilter.current = isStartsWithFilter();
     } else {
       setSelectedSuggestions([]);
       startsWithFilter.current = false;
     }
-
-    // if (!selectedSuggestions) {
-    //   setSelectedSuggestions([]);
-    //   startsWithFilter.current = false;
-    // } else {
-    //   setIsStartsWithFilter();
-    // }
   }, [columnName]);
 
   //close dropdown when clicking outside
@@ -85,7 +78,7 @@ export const TypeaheadFilter = (props: {
     props.onFilterSubmit(filterQuery, selectedSuggestions, columnName);
   }, [selectedSuggestions]);
 
-  const setIsStartsWithFilter = () => {
+  const isStartsWithFilter = () => {
     if (selectedSuggestions[0]) {
       const lastThreeCharacters = selectedSuggestions[0].substring(
         selectedSuggestions[0].length - 3,
@@ -93,13 +86,13 @@ export const TypeaheadFilter = (props: {
       );
 
       if (selectedSuggestions.length === 1 && lastThreeCharacters === "...") {
-        startsWithFilter.current = true;
+        return true;
       } else {
-        startsWithFilter.current = false;
+        return false;
       }
-    } else {
-      startsWithFilter.current = false;
     }
+
+    return false;
   };
 
   const handleDropdownToggle = (event: React.MouseEvent): void => {
@@ -121,7 +114,7 @@ export const TypeaheadFilter = (props: {
       startsWithFilter.current = false;
       return removeOption(selectedValue);
     } else {
-      if (isStartsWithFilter(selectedValue)) {
+      if (isStartsWithVal(selectedValue)) {
         startsWithFilter.current = true;
         return [selectedValue];
       } else {
@@ -185,7 +178,7 @@ export const TypeaheadFilter = (props: {
     else return false;
   };
 
-  function isStartsWithFilter(selectedVal: string) {
+  function isStartsWithVal(selectedVal: string) {
     return selectedVal === searchValue + "...";
   }
 
@@ -254,11 +247,6 @@ function getFilterQuery(
       return `${column} in ${JSON.stringify(filterValues)}`;
     }
   }
-}
-
-enum FilterType {
-  exactMatch = "exact match",
-  startsWith = "starts with",
 }
 
 const Icon = () => {

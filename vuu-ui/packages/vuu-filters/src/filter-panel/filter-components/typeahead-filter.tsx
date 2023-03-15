@@ -27,8 +27,12 @@ export const TypeaheadFilter = (props: {
 
   const ref = useRef<HTMLDivElement>(null);
 
-  //if selected column changes, add it to selectedSuggestions
+  // get suggestions & filters on column select
   useEffect(() => {
+    getSuggestions(props.defaultTypeaheadParams).then((response) => {
+      setSuggestions(response);
+    });
+
     const selected = props.existingFilters ?? [];
     setSelectedSuggestions(selected);
   }, [columnName]);
@@ -48,14 +52,7 @@ export const TypeaheadFilter = (props: {
     };
   });
 
-  //get suggestions on load
-  useEffect(() => {
-    getSuggestions(props.defaultTypeaheadParams).then((response) => {
-      setSuggestions(response);
-    });
-  }, [props.defaultTypeaheadParams[1]]);
-
-  //get suggestions while typing
+  // get suggestions while typing
   useEffect(() => {
     getSuggestions([tableName, columnName, searchValue]).then((options) => {
       if (searchValue) options.unshift(`${searchValue}...`);
@@ -63,6 +60,7 @@ export const TypeaheadFilter = (props: {
     });
   }, [searchValue]);
 
+  // on select new, check if "starts with" filter selected and rebuild query
   useEffect(() => {
     startsWithFilter.current = isStartsWithFilter();
     const filterQuery = getTypeaheadQuery(

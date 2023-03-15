@@ -29,13 +29,8 @@ export const TypeaheadFilter = (props: {
 
   //if selected column changes, add it to selectedSuggestions
   useEffect(() => {
-    if (props.existingFilters) {
-      setSelectedSuggestions(props.existingFilters);
-      startsWithFilter.current = isStartsWithFilter();
-    } else {
-      setSelectedSuggestions([]);
-      startsWithFilter.current = false;
-    }
+    const selected = props.existingFilters ?? [];
+    setSelectedSuggestions(selected);
   }, [columnName]);
 
   //close dropdown when clicking outside
@@ -69,7 +64,8 @@ export const TypeaheadFilter = (props: {
   }, [searchValue]);
 
   useEffect(() => {
-    const filterQuery = getFilterQuery(
+    startsWithFilter.current = isStartsWithFilter();
+    const filterQuery = getTypeaheadQuery(
       selectedSuggestions,
       columnName,
       startsWithFilter.current
@@ -87,10 +83,8 @@ export const TypeaheadFilter = (props: {
       if (selectedSuggestions.length === 1 && lastThreeCharacters === "...") {
         return true;
       }
-
       return false;
     }
-
     return false;
   };
 
@@ -100,6 +94,7 @@ export const TypeaheadFilter = (props: {
   };
 
   const getSuggestions = useTypeaheadSuggestions();
+
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchValue(e.target.value);
   };
@@ -109,23 +104,11 @@ export const TypeaheadFilter = (props: {
   };
 
   const getUpdatedSelection = (selectedValue: string) => {
-    if (isAlreadySelected(selectedValue)) {
-      startsWithFilter.current = false;
-      return removeOption(selectedValue);
-    }
+    if (isAlreadySelected(selectedValue)) return removeOption(selectedValue);
 
-    if (isStartsWithVal(selectedValue)) {
-      startsWithFilter.current = true;
+    if (isStartsWithVal(selectedValue) || startsWithFilter.current)
       return [selectedValue];
-    }
 
-    //don't allow starts with filter to be mixed with exact match filter
-    if (startsWithFilter.current) {
-      startsWithFilter.current = false;
-      return [selectedValue];
-    }
-
-    startsWithFilter.current = false;
     return [...selectedSuggestions, selectedValue];
   };
 
@@ -154,7 +137,7 @@ export const TypeaheadFilter = (props: {
     e.stopPropagation();
     const newSelection = removeOption(suggestion);
     setSelectedSuggestions(newSelection);
-    const filterQuery = getFilterQuery(
+    const filterQuery = getTypeaheadQuery(
       newSelection,
       columnName,
       startsWithFilter.current
@@ -231,7 +214,7 @@ export const TypeaheadFilter = (props: {
   );
 };
 
-function getFilterQuery(
+function getTypeaheadQuery(
   filterValues: string[],
   column: string,
   isStartsWithFilter?: boolean
@@ -249,6 +232,7 @@ function getFilterQuery(
   }
 }
 
+// remove/replace with salt components/icons
 const Icon = () => {
   return (
     <svg height="20" width="20" viewBox="0 0 20 20">
@@ -257,6 +241,7 @@ const Icon = () => {
   );
 };
 
+// remove/replace with salt components/icons
 const CloseIcon = () => {
   return (
     <svg height="20" width="20" viewBox="0 0 20 20">

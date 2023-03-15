@@ -19,11 +19,9 @@ export const FilterPanel = (props: {
   const [selectedColumnName, setSelectedColumnName] = useState<string | null>(
     null
   );
-
   const [allQueries, setAllQueries] = useState<{
     [key: string]: string;
   } | null>(null);
-
   const [filters, setFilters] = useState<{
     [key: string]: string[] | IRange;
   } | null>(null);
